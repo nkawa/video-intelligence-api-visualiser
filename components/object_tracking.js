@@ -212,9 +212,9 @@ Vue.component('object-tracking-viz', {
         const component = this
 
         this.interval_timer = setInterval(function () {
-            console.log('running')
+//            console.log('running')
             const object_tracks = component.indexed_object_tracks
-            
+//            console.log("object",object_tracks)
             draw_bounding_boxes(object_tracks, ctx)
         }, 1000 / 30)
     },
@@ -231,8 +231,8 @@ Vue.component('object-tracking-viz', {
 class Object_Track {
     constructor(json_data, video_height, video_width) {
         this.name = json_data.entity.description
-        this.start_time = nullable_time_offset_to_seconds(json_data.segment.start_time_offset)
-        this.end_time = nullable_time_offset_to_seconds(json_data.segment.end_time_offset)
+        this.start_time = nullable_time_offset_to_seconds(json_data.segment.starttime_offset)
+        this.end_time = nullable_time_offset_to_seconds(json_data.segment.endtime_offset)
         this.confidence = json_data.confidence
 
         this.frames = []

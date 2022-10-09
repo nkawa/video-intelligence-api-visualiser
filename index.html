@@ -3,12 +3,12 @@
 
 <head>
 
-    <title>Video Intelligence API Visualiser</title>
+    <title>Objecct Tracking Visualiser</title>
     <link rel="icon" type="image/png" href="assets/icon.png" />
 
-    <meta name="description" content="Interactive visualiser for the Google Cloud Video Intelligence API.">
+<!--    <meta name="description" content="Interactive visualiser for the Google Cloud Video Intelligence API.">
     <meta name="keywords" content="google cloud, video, intelligence, api, video intelligence api, google cloud">
-
+-->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 
@@ -22,14 +22,8 @@
     <script src="https://unpkg.com/vue-router@2.0.0/dist/vue-router.js"></script>
     
     
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-N80GH8KX9W"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-
-      gtag('config', 'G-N80GH8KX9W', {client_storage: 'none'});
-
     </script>
 
 
@@ -172,7 +166,7 @@
             </div>
             <div class="mdl-layout__header-row">
 
-                <span class="mdl-layout-title">Video Intelligence API Visualiser</span>
+                <span class="mdl-layout-title">Object Tracking Visualiser</span>
             </div>
         </header>
 
@@ -184,6 +178,7 @@
 
 
         <div id="upload-data">
+            <!--
             <h5>Try with your data</h5>
             <p>You can analyse a video by following the instructions <a target="_blank"
                     href="https://cloud.google.com/video-intelligence/docs/quickstart?utm_source=ext&utm_medium=partner&utm_campaign=CDR_zac_aiml_vid_intel_demo_interactive demo_060221&utm_content=-">here</a>.
@@ -194,12 +189,13 @@
 
             <p>This app <b><u>doesn't</u></b> send or store any of your video or annotation data. It just visualises
                 local data files.</p>
+            -->
             <div class="upload-area" ondrop="drop_video(event)" ondragover="drag_enter(event)">
-                <p>Your video</p>
+                <p>upload video</p>
                 <input id="video_input" type="file" accept="video/*" />
             </div>
             <div class="upload-area" ondrop="drop_json(event)" ondragover="drag_enter(event)">
-                <p>Your .json</p>
+                <p>upload .json</p>
                 <input id="json_input" type="file" accept="application/JSON" />
             </div>
         </div>
@@ -216,7 +212,7 @@
 
         <object-tracking-viz v-if="current_view == 'Object Tracking'" id="object_tracks" v-bind:json_data="json_data"
             v-bind:video_info="video_info" v-on:segment-clicked="jump_video"></object-tracking-viz>
-
+<!--
         <label-detection-viz v-if="current_view == 'Label Detection'" id="label_detection" v-bind:json_data="json_data"
             v-bind:video_info="video_info" v-on:segment-clicked="jump_video"></label-detection-viz>
 
@@ -247,16 +243,16 @@
             id="explicit_content_detection" v-bind:json_data="json_data" v-bind:video_info="video_info"
             v-on:shot-clicked="jump_video">
         </explicit-content-detection-viz>
-
+-->
     </div>
 
 
 
 
     <script src="utils/utils.js"></script>
-
     <script src="components/object_tracking.js"></script>
-    <script src="components/label_detection.js"></script>
+
+<!--    <script src="components/label_detection.js"></script>
     <script src="components/shot_detection.js"></script>
     <script src="components/speech_transcription.js"></script>
     <script src="components/person_detection.js"></script>
@@ -264,7 +260,7 @@
     <script src="components/logo_recognition.js"></script>
     <script src="components/text_detection.js"></script>
     <script src="components/explicit_content_detection.js"></script>
-
+-->
     <script>
 
         function jump_video_to_time(time) {
@@ -326,15 +322,15 @@
                 video_length: 252,
                 current_view: 'Label Detection',
                 title_ids_dict: {
-                    'Label Detection': 'shot_label_annotations',
-                    'Shot Detection': 'shot_annotations',
+//                    'Label Detection': 'shot_label_annotations',
+//                    'Shot Detection': 'shot_annotations',
                     'Object Tracking': 'object_annotations',
-                    'Person Detection': 'person_detection_annotations',
-                    'Face Detection': 'face_detection_annotations',
-                    'Logo Recognition': 'logo_recognition_annotations',
-                    'Speech Transcription': 'speech_transcriptions',
-                    'Text Detection': 'text_annotations',
-                    'Explicit Content Detection': 'explicit_annotation'
+//                    'Person Detection': 'person_detection_annotations',
+//                    'Face Detection': 'face_detection_annotations',
+//                    'Logo Recognition': 'logo_recognition_annotations',
+//                    'Speech Transcription': 'speech_transcriptions',
+//                    'Text Detection': 'text_annotations',
+//                    'Explicit Content Detection': 'explicit_annotation'
                 }
             }, methods: {
                 jump_video: function (event_data) {
@@ -351,22 +347,29 @@
             computed: {
                 data_misaligned: function () {
                     console.log('delt')
-                    if (this.json_data)
-                        if (this.json_data.annotation_results) {
-                            const delta = this.video_info.length - this.json_data.annotation_results[0].segment.end_time_offset.seconds
-                            console.log('delt', delta)
-                            if (Math.abs(delta) > 2) {
-                                return true
-                            }
-                        }
+  //                  if (this.json_data)
+//                        if (this.json_data.annotation_results) {
+  //                          const delta = this.video_info.length - this.json_data.annotation_results[0].segment.end_time_offset.seconds
+  //                          console.log('delt', delta)
+   //                         if (Math.abs(delta) > 2) {
+    //                            return true
+     //                       }
+       //                 }
                     return false
                 },
                 detected_features: function () {
 
                     var features = []
-
+//                    console.log("Detect!")
+                    console.log("DT",this.json_data);
                     if (!this.json_data.annotation_results)
+//                        console.log("none",this.json_data);
                         return features
+                    if (this.json_data.annotation_results)
+                        console.log("Exists!")
+                    else
+                        console.log("None!")
+                    console.log("an",this.json_data.annotation_results);
 
                     this.json_data.annotation_results.forEach(annotations => {
                         console.log(Object.keys(annotations))
@@ -406,17 +409,22 @@
         }
 
         function load_json_from_url(url) {
+            console.log("Loading json",url)
             var json = null
             $.ajax({
                 'async': false,
                 'url': url,
                 'dataType': "json",
                 'success': function (data) {
+                    console.log("Success",data)
                     json = data
+                },
+                'error': function(j,ts,err){
+                    console.log('ajaxerr',ts,err)
                 }
             })
             json_data = json
-            console.log(json_data)
+            console.log("Loaded ",json_data)
             app.json_data = json_data
         }
 
@@ -460,8 +468,11 @@
         video_input.addEventListener('change', load_video_dragged, false)
         json_input.addEventListener('change', load_json_dragged, false)
 
-        load_json_from_url("assets/test_json.json")
-        load_video_from_url("assets/test_video.mp4")
+//        load_json_from_url("assets/test_json.json")
+//        load_video_from_url("assets/test_video.mp4")
+
+        load_json_from_url("assets/trsuco_video_video_intelligence_result.json")
+        load_video_from_url("assets/cameraA12_04-00-02_10_00.mp4")
 
 
         // check for hash code in url 
