@@ -108,14 +108,16 @@ Vue.component('object-tracking-viz', {
             Extract just the object tracking data from json
             `
 
-            if (!this.json_data.annotation_results)
+            if (!this.json_data.prediction)
                 return []
 
-            for (let index = 0; index < this.json_data.annotation_results.length; index++) {
-                if ('object_annotations' in this.json_data.annotation_results[index])
-                    return this.json_data.annotation_results[index].object_annotations
-            }
-            return []
+//            for (let index = 0; index < this.json_data.prediction.length; index++) {
+  //              if ('object_annotations' in this.json_data.annotation_results[index])
+
+//                console.log("Jsonredict",this.json_data.prediction)
+             return this.json_data.prediction
+    //        }
+      //      return []
         },
 
         indexed_object_tracks: function () {
@@ -125,7 +127,11 @@ Vue.component('object-tracking-viz', {
             `
 
             const indexed_tracks = []
-
+//            console.log("ObjectTracks", this.object_tracks)
+            if (!this.object_tracks){
+                console.log("None! objects")
+                return []
+            }
             this.object_tracks.forEach(element => {
                 if (element.confidence > this.confidence_threshold)
                     indexed_tracks.push(new Object_Track(element, this.video_info.height, this.video_info.width))
@@ -138,6 +144,7 @@ Vue.component('object-tracking-viz', {
             ` 
             create the list of cronological time segments that represent just when objects are present on screen
             `
+ //           console.log("Segments",this.indexed_object_tracks)
             const segments = {}
 
             this.indexed_object_tracks.forEach(object_tracks => {
@@ -230,9 +237,10 @@ Vue.component('object-tracking-viz', {
 
 class Object_Track {
     constructor(json_data, video_height, video_width) {
-        this.name = json_data.entity.description
-        this.start_time = nullable_time_offset_to_seconds(json_data.segment.starttime_offset)
-        this.end_time = nullable_time_offset_to_seconds(json_data.segment.endtime_offset)
+//        console.log("genTrack", video_height, video_width)
+        this.name = json_data.displayName
+        this.start_time = nullable_time_offset_to_seconds(json_data.timeSegmentStart)
+        this.end_time = nullable_time_offset_to_seconds(json_data.timeSegmentEnd)
         this.confidence = json_data.confidence
 
         this.frames = []
@@ -240,14 +248,15 @@ class Object_Track {
         json_data.frames.forEach(frame => {
             const new_frame = {
                 'box': {
-                    'x': (frame.normalized_bounding_box.left || 0) * video_width,
-                    'y': (frame.normalized_bounding_box.top || 0) * video_height,
-                    'width': ((frame.normalized_bounding_box.right || 0) - (frame.normalized_bounding_box.left || 0)) * video_width,
-                    'height': ((frame.normalized_bounding_box.bottom || 0) - (frame.normalized_bounding_box.top || 0)) * video_height
+                    'x': (frame.xMin || 0) * video_width,
+                    'y': (frame.yMin || 0) * video_height,
+                    'width': ((frame.xMax || 0) - (frame.xMin || 0)) * video_width,
+                    'height': ((frame.yMax || 0) - (frame.yMin || 0)) * video_height
                 },
-                'time_offset': nullable_time_offset_to_seconds(frame.time_offset)
+                'time_offset': nullable_time_offset_to_seconds(frame.timeOffset)
             }
             this.frames.push(new_frame)
+//            console.log("New:",new_frame)
         })
     }
 

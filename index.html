@@ -362,7 +362,7 @@
                     var features = []
 //                    console.log("Detect!")
                     console.log("DT",this.json_data);
-                    if (!this.json_data.annotation_results)
+/*                    if (!this.json_data.annotation_results)
 //                        console.log("none",this.json_data);
                         return features
                     if (this.json_data.annotation_results)
@@ -375,7 +375,8 @@
                         console.log(Object.keys(annotations))
                         features = features.concat(Object.keys(annotations))
                     })
-
+*/
+                    features = "object_annotations"
                     return features
                 }
             }
@@ -471,8 +472,9 @@
 //        load_json_from_url("assets/test_json.json")
 //        load_video_from_url("assets/test_video.mp4")
 
-        load_json_from_url("assets/trsuco_video_video_intelligence_result.json")
-        load_video_from_url("assets/cameraA12_04-00-02_10_00.mp4")
+        load_json_from_url("assets/prediction-TRUSCO-1F-BirdView-A12-2022-10-09T02_51_45.474953Z_predictions_00001.jsonl")
+//        load_json_from_url("assets/trsuco_video_video_intelligence_result.json")
+        load_video_from_url("assets/2022-10-06_cameraA12_04-00-02_15_00.mp4")
 
 
         // check for hash code in url 
