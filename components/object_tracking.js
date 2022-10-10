@@ -28,6 +28,17 @@ style.innerHTML = `
     cursor: pointer;
 }
 
+.segment-sub{
+    position: absolute; 
+    background-color: #ff6600;
+    height: 1em;
+    border-radius: 5px;
+    min-width: 5px;
+    cursor: pointer;
+}
+
+
+
 .label{
     display: inline-block;
     background-color:  #4285F4;
@@ -51,7 +62,14 @@ style.innerHTML = `
     border-radius: 5px;
 }
 
-
+.segment-timeline2{
+    display: inline-block;
+    vertical-align: middle;
+    width: 80%;
+    background-color: #ff6600;
+    padding: 5px;
+    border-radius: 5px;
+}
 
 
 .segments-enter-active, .segments-leave-active , .segment-container{
@@ -170,6 +188,13 @@ Vue.component('object-tracking-viz', {
                     segments[object_tracks.name].segments.push([object_tracks.start_time, object_tracks.end_time])
             })
 
+            // we should sort segments by order
+            Object.entries(segments).forEach( seg =>{
+//                console.log("WoW",seg[1])
+//                console.log(seg[1].segments)
+                seg[1].segments.sort(function(a,b){return a[0]-b[0]})
+            })
+
             return segments
         }
     },
@@ -207,16 +232,36 @@ Vue.component('object-tracking-viz', {
                 </div>
             </div>
         </transition-group>
+
+        <transition-group name="segments2" tag="div">
+            
+        <div class="segment-container" v-for="segments, key in object_track_segments" v-bind:key="key + 'z2'">
+        <div class="eachseg-container" v-for="segment in segments.segments" >
+            <div class="label">{{key}} ({{segment[0]}}-{{segment[1]}})</div>
+            <div class="segment-timeline">
+                <div class="segment-sub" 
+                                    v-bind:style="segment_style(segment)" 
+                                    v-on:click="segment_clicked(segment)"
+                ></div>
+            </div>
+        </div>
+        </div>
+        </transition-group>
     </div>
     `,
     mounted: function () {
         console.log('mounted component')
         var canvas = document.getElementById("my_canvas")
         this.ctx = canvas.getContext("2d")
-        this.ctx.font = "20px Roboto"
+        this.ctx.font = "14px Roboto"
         const ctx = this.ctx
 
         const component = this
+
+// ここでオブジェクトのリストも作りたい
+        const vlist = document.getElementById("annotation_list")
+        
+
 
         this.interval_timer = setInterval(function () {
 //            console.log('running')
@@ -228,7 +273,7 @@ Vue.component('object-tracking-viz', {
     beforeDestroy:function(){
         console.log('destroying component')
         clearInterval(this.interval_timer)
-        this.ctx.clearRect(0, 0, 800, 500)
+        this.ctx.clearRect(0, 0, 1152, 768)
     }
 })
 

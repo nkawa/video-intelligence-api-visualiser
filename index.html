@@ -45,7 +45,7 @@
         #video-conatiner {
 
             position: relative;
-            width: 800px;
+            width: 1152px;
             margin: 15px;
             display: inline-block;
         }
@@ -80,6 +80,9 @@
             text-align: center;
             vertical-align: top;
             width: 250px;
+        }
+        #annotation_list{
+            text-align: left;
         }
 
         #upload-data>p {
@@ -153,13 +156,10 @@
     </style>
 </head>
 
-
 <body>
 
-
-
     <div id="app"  class="mdl-layout--fixed-header">
-
+<!--
         <header class="mdl-layout__header">
             <div class="mdl-layout-icon">
                 <img class="logo" src="assets/icon.png">
@@ -169,34 +169,32 @@
                 <span class="mdl-layout-title">Object Tracking Visualiser</span>
             </div>
         </header>
-
+-->
         <div id="video-conatiner">
-            <canvas id="my_canvas" width="800" height="500"></canvas>
+            <canvas id="my_canvas" width="1152" height="768"></canvas>
             <video id="video" controls autoplay></video>
         </div>
 
-
-
         <div id="upload-data">
-            <!--
-            <h5>Try with your data</h5>
-            <p>You can analyse a video by following the instructions <a target="_blank"
-                    href="https://cloud.google.com/video-intelligence/docs/quickstart?utm_source=ext&utm_medium=partner&utm_campaign=CDR_zac_aiml_vid_intel_demo_interactive demo_060221&utm_content=-">here</a>.
-                Also see the script <a target="_blank"
-                    href="https://github.com/ZackAkil/video-intelligence-api-visualiser/blob/main/run_video_intelligence.py">here</a>
-                if you want to run all features at once.
-            </p>
 
-            <p>This app <b><u>doesn't</u></b> send or store any of your video or annotation data. It just visualises
-                local data files.</p>
-            -->
             <div class="upload-area" ondrop="drop_video(event)" ondragover="drag_enter(event)">
-                <p>upload video</p>
+                video:
                 <input id="video_input" type="file" accept="video/*" />
             </div>
             <div class="upload-area" ondrop="drop_json(event)" ondragover="drag_enter(event)">
-                <p>upload .json</p>
+                json:
                 <input id="json_input" type="file" accept="application/JSON" />
+            </div>
+<!--
+            <annotations-nav v-bind:title_ids_dict="title_ids_dict" v-bind:detected_features="detected_features"
+            v-bind:current_view="current_view" v-on:nav-clicked="set_current_view">
+
+            </annotations-nav>
+            -->     
+            <div id="interpolate">    
+                interpolate <input type="checkbox" v-model="interpolate"/>
+            </div>
+            <div id="annotation_list">
             </div>
         </div>
 
@@ -206,72 +204,27 @@
         </div>
 
 
-        <annotations-nav v-bind:title_ids_dict="title_ids_dict" v-bind:detected_features="detected_features"
-            v-bind:current_view="current_view" v-on:nav-clicked="set_current_view">
-        </annotations-nav>
+
 
         <object-tracking-viz v-if="current_view == 'Object Tracking'" id="object_tracks" v-bind:json_data="json_data"
             v-bind:video_info="video_info" v-on:segment-clicked="jump_video"></object-tracking-viz>
-<!--
-        <label-detection-viz v-if="current_view == 'Label Detection'" id="label_detection" v-bind:json_data="json_data"
-            v-bind:video_info="video_info" v-on:segment-clicked="jump_video"></label-detection-viz>
 
-        <shot-detection-viz v-if="current_view == 'Shot Detection'" id="shot_detection" v-bind:json_data="json_data"
-            v-bind:video_info="video_info" v-on:shot-clicked="jump_video"></shot-detection-viz>
-
-        <speech-transcription-viz v-if="current_view == 'Speech Transcription'" id="speech_transcription"
-            v-bind:json_data="json_data" v-bind:video_info="video_info" v-on:word-clicked="jump_video">
-        </speech-transcription-viz>
-
-        <person-detection-viz v-if="current_view == 'Person Detection'" id="person_detection"
-            v-bind:json_data="json_data" v-bind:video_info="video_info" v-on:segment-clicked="jump_video">
-        </person-detection-viz>
-
-        <face-detection-viz v-if="current_view == 'Face Detection'" id="face_detection" v-bind:json_data="json_data"
-            v-bind:video_info="video_info" v-on:segment-clicked="jump_video">
-        </face-detection-viz>
-
-        <logo-recognition-viz v-if="current_view == 'Logo Recognition'" id="logo_recognition"
-            v-bind:json_data="json_data" v-bind:video_info="video_info" v-on:segment-clicked="jump_video">
-        </logo-recognition-viz>
-
-        <text-detection-viz v-if="current_view == 'Text Detection'" id="text_detection" v-bind:json_data="json_data"
-            v-bind:video_info="video_info" v-on:segment-clicked="jump_video">
-        </text-detection-viz>
-
-        <explicit-content-detection-viz v-if="current_view == 'Explicit Content Detection'"
-            id="explicit_content_detection" v-bind:json_data="json_data" v-bind:video_info="video_info"
-            v-on:shot-clicked="jump_video">
-        </explicit-content-detection-viz>
--->
     </div>
-
-
-
-
     <script src="utils/utils.js"></script>
     <script src="components/object_tracking.js"></script>
 
-<!--    <script src="components/label_detection.js"></script>
-    <script src="components/shot_detection.js"></script>
-    <script src="components/speech_transcription.js"></script>
-    <script src="components/person_detection.js"></script>
-    <script src="components/face_detection.js"></script>
-    <script src="components/logo_recognition.js"></script>
-    <script src="components/text_detection.js"></script>
-    <script src="components/explicit_content_detection.js"></script>
--->
+
     <script>
 
         function jump_video_to_time(time) {
             const video = document.querySelector('video')
             video.currentTime = time
-            video.play()
+           video.pause()
+           console.log("stop")
         }
 
-
-
         // define component
+    
         Vue.component('annotations-nav-tab', {
             props: ['title', 'current_view', 'data_id', 'detected_features'],
             computed: {
@@ -305,34 +258,29 @@
             </div>
             `
         })
+    
 
         var router = new VueRouter({
             mode: 'history',
             // routes: { path: '/match/:id', component: test_com}
         });
 
-
-
         var app = new Vue({
             router,
             el: '#app',
             data: {
                 json_data: {},
-                video_info: { width: 800, height: 500, length: 252 },
+                video_info: { width: 1152, height: 768, length: 252 },
                 video_length: 252,
-                current_view: 'Label Detection',
+                interpolate: false,
+                current_view: 'Object Tracking',
                 title_ids_dict: {
-//                    'Label Detection': 'shot_label_annotations',
-//                    'Shot Detection': 'shot_annotations',
+
                     'Object Tracking': 'object_annotations',
-//                    'Person Detection': 'person_detection_annotations',
-//                    'Face Detection': 'face_detection_annotations',
-//                    'Logo Recognition': 'logo_recognition_annotations',
-//                    'Speech Transcription': 'speech_transcriptions',
-//                    'Text Detection': 'text_annotations',
-//                    'Explicit Content Detection': 'explicit_annotation'
+
                 }
-            }, methods: {
+            }, 
+            methods: {
                 jump_video: function (event_data) {
                     document.querySelector('video').scrollIntoView({ 'behavior': 'smooth', 'block': 'center' })
                     jump_video_to_time(event_data.seconds)
@@ -340,21 +288,11 @@
                 set_current_view: function (new_view) {
                     this.current_view = new_view
                     router.push({hash: '#'+new_view  })
-
-
                 }
             },
             computed: {
                 data_misaligned: function () {
-                    console.log('delt')
-  //                  if (this.json_data)
-//                        if (this.json_data.annotation_results) {
-  //                          const delta = this.video_info.length - this.json_data.annotation_results[0].segment.end_time_offset.seconds
-  //                          console.log('delt', delta)
-   //                         if (Math.abs(delta) > 2) {
-    //                            return true
-     //                       }
-       //                 }
+
                     return false
                 },
                 detected_features: function () {
@@ -362,20 +300,7 @@
                     var features = []
 //                    console.log("Detect!")
                     console.log("DT",this.json_data);
-/*                    if (!this.json_data.annotation_results)
-//                        console.log("none",this.json_data);
-                        return features
-                    if (this.json_data.annotation_results)
-                        console.log("Exists!")
-                    else
-                        console.log("None!")
-                    console.log("an",this.json_data.annotation_results);
 
-                    this.json_data.annotation_results.forEach(annotations => {
-                        console.log(Object.keys(annotations))
-                        features = features.concat(Object.keys(annotations))
-                    })
-*/
                     features = "object_annotations"
                     return features
                 }
@@ -445,8 +370,8 @@
             console.log("Can start playing video", video.duration, video.videoHeight, video.videoWidth)
             app.video_info.length = video.duration
             app.video_length.duration
-            app.video_info.height = 500
-            app.video_info.width = 800
+            app.video_info.height = 768
+            app.video_info.width = 1152
         }
 
         function drag_enter(ev) {
@@ -469,15 +394,9 @@
         video_input.addEventListener('change', load_video_dragged, false)
         json_input.addEventListener('change', load_json_dragged, false)
 
-//        load_json_from_url("assets/test_json.json")
-//        load_video_from_url("assets/test_video.mp4")
-
         load_json_from_url("assets/prediction-TRUSCO-1F-BirdView-A12-2022-10-09T02_51_45.474953Z_predictions_00001.jsonl")
 //        load_json_from_url("assets/trsuco_video_video_intelligence_result.json")
         load_video_from_url("assets/2022-10-06_cameraA12_04-00-02_15_00.mp4")
-
-
-        // check for hash code in url 
 
         if (app.$route.hash) {
             const hash_value = decodeURI(app.$route.hash.substring(1))
@@ -486,8 +405,6 @@
             } 
 
         }
-
-
 
     </script>
 
