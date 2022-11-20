@@ -350,9 +350,9 @@ class Object_Track {
         return null
     }
 
-    current_bounding_box(seconds, interpolate = true) {
+    current_bounding_box(seconds){ /// }, interpolate = true) {
 
-        if (interpolate)
+        if (app.interpolate)
             return this.most_recent_interpolated_bounding_box(seconds)
         else
             return this.most_recent_real_bounding_box(seconds)
